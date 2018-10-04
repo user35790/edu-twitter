@@ -19,28 +19,28 @@ public class UserJDBC implements UserDAO{
 
     @Override
     public Integer getCountUser() {
-        String sql = "select count(*) from Users";
+        String sql = "SELECT COUNT(*) FROM users";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     @Override
     public List<User> getUsers() {
-        String sql = "select * from Users";
+        String sql = "SELECT * FROM Users";
         return jdbcTemplate.query(sql, this:: mapUser);
     }
 
     private User mapUser(ResultSet rs, int i) throws SQLException {
         return new User(
                rs.getInt("id"),
-               rs.getString("name")
+               rs.getString("login"),
+               rs.getString("password")
         );
     }
 
     @Override
-    public String create(User user) {
-        String sql = "INSERT INTO Users (id, name) VALUES(?,?)";
-        jdbcTemplate.update(sql, user.getId(), user.getName());
-        return "ok";
+    public void create(User user) {
+        String sql = "INSERT INTO users (login, password) VALUES(?,?)";
+        jdbcTemplate.update(sql, user.getLogin(), user.getPassword());
     }
 
     @Override

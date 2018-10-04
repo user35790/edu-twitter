@@ -10,7 +10,7 @@ public interface UserDAO {
 
     List<User> getUsers();
 
-    String create(User user);
+    void create(User user);
 
     void update(User user);
 
