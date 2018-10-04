@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
-
-    private static int count = 0;
 
     private final UserDAO userDAO;
 
@@ -20,10 +19,9 @@ public class UserController {
     }
 
     @RequestMapping("/new")
-    public Integer createUser(@RequestParam(name="name", required=false, defaultValue="Username") String name) {
-        count++;
-        userDAO.create(new User(count, name));
-        return count;
+    public void createUser(@RequestParam(name="login", required=false, defaultValue="XXX") String login,
+                              @RequestParam(name="password", required=false, defaultValue="123") String password) {
+        userDAO.create(new User(login, password));
     }
 
     @RequestMapping("/get")
