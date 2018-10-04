@@ -10,7 +10,7 @@ public class Tweet {
     private Date dateLastWrite;
 
     private int likes;
-    private Comment[] comments;
+    private int[] comments;
 
     private String text;
 
@@ -45,11 +45,11 @@ public class Tweet {
         this.likes = likes;
     }
 
-    public Comment[] getComments() {
+    public int[] getComments() {
         return comments;
     }
 
-    public void setComments(Comment[] comments) {
+    public void setComments(int[] comments) {
         this.comments = comments;
     }
 

@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class User {
 
-    private final int id;
+    private int id;
     private String login;
     private String password;
 
@@ -16,7 +16,20 @@ public class User {
     private String status;
     private Date dateStart;
 
-    private Tweet[] tweets;
+    private int[] tweets;
+
+    public User(int id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.dateStart = new Date();
+
+    }
+
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 
     public String getLogin() {
         return login;
@@ -78,17 +91,12 @@ public class User {
         this.dateStart = dateStart;
     }
 
-    public Tweet[] getTweets() {
+    public int[] getTweets() {
         return tweets;
     }
 
-    public void setTweets(Tweet[] tweets) {
+    public void setTweets(int[] tweets) {
         this.tweets = tweets;
-    }
-
-    public User(int id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public String getName() {
