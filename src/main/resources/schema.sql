@@ -13,6 +13,7 @@ image varchar (300),
 PRIMARY KEY (id)
 );
 
+/* TODO: DEFAULT GETDATE() ?*/
 
 CREATE TABLE tweets(
 id int NOT NULL AUTO_INCREMENT,
@@ -21,7 +22,7 @@ id_creator int NOT NULL,
 text varchar (300) NOT NULL,
 
 date date,
-likes int,
+likes int DEFAULT 0,
 
 PRIMARY KEY (id)
 );
@@ -35,7 +36,7 @@ id_tweet int NOT NULL,
 text varchar (100) NOT NULL,
 
 date date,
-likes int,
+likes int DEFAULT 0,
 
 PRIMARY KEY (id)
 );
