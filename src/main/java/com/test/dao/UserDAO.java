@@ -6,14 +6,24 @@ import java.util.List;
 
 public interface UserDAO {
 
-    Integer getCountUser();
+    Integer getCountUsers();
+
+    boolean isLoginNotExist(String login);
 
     List<User> getUsers();
 
-    void create(User user);
+    User getUser(int id);
 
-    void update(User user);
+    void createUser(User user, String password);
 
-    void delete(int id);
+    void updateUserInfo(User user);
+
+    void updateUserPassword(int id, String password);
+
+    void updateUserStatus(int id, String status);
+
+    void updateUserImage(int id, String image);
+
+    void deleteUser(int id);
 
 }
