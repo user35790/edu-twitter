@@ -37,43 +37,43 @@ public class UserJDBC implements UserDAO{
     }
 
     @Override
-    public User getUser(int id) {
+    public User get(int id) {
         String sql = "SELECT * FROM Users WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, this::mapUser, id);
     }
 
     @Override
-    public void createUser(User user, String password) {
+    public void create(User user, String password) {
         String sql = "INSERT INTO users (login, password, name, sex) VALUES(?,?,?,?)";
         jdbcTemplate.update(sql, user.getLogin(), password, user.getName(), user.getSex());
     }
 
     @Override
-    public void updateUserInfo(User user) {
+    public void updateInfo(User user) {
         String sql = "UPDATE users SET name = ?, login = ?, date_birthday = ?, sex = ? WHERE id = ?";
         jdbcTemplate.update(sql, user.getName(), user.getLogin(), user.getDateBirthday(), user.getSex(), user.getId());
     }
 
     @Override
-    public void updateUserPassword(int id, String password) {
+    public void updatePassword(int id, String password) {
         String sql = "UPDATE users SET password = ? WHERE id = ?";
         jdbcTemplate.update(sql, password, id);
     }
 
     @Override
-    public void updateUserStatus(int id, String status) {
+    public void updateStatus(int id, String status) {
         String sql = "UPDATE users SET status = ? WHERE id = ?";
         jdbcTemplate.update(sql, status, id);
     }
 
     @Override
-    public void updateUserImage(int id, String image) {
+    public void updateImage(int id, String image) {
         String sql = "UPDATE users SET image = ? WHERE id = ?";
         jdbcTemplate.update(sql, image, id);
     }
 
     @Override
-    public void deleteUser(int id) {
+    public void delete(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }

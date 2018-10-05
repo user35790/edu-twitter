@@ -12,18 +12,18 @@ public interface UserDAO {
 
     List<User> getUsers();
 
-    User getUser(int id);
+    User get(int id);
 
-    void createUser(User user, String password);
+    void create(User user, String password);
 
-    void updateUserInfo(User user);
+    void updateInfo(User user);
 
-    void updateUserPassword(int id, String password);
+    void updatePassword(int id, String password);
 
-    void updateUserStatus(int id, String status);
+    void updateStatus(int id, String status);
 
-    void updateUserImage(int id, String image);
+    void updateImage(int id, String image);
 
-    void deleteUser(int id);
+    void delete(int id);
 
 }

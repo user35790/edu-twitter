@@ -19,18 +19,20 @@ public class UserController {
         this.userDAO = userDAO;
     }
 
-    @RequestMapping("/new_user")
+    // TODO: проверка поля
+    // TODO: общий класс под сессию пользователя для запоминания id
+
+    @RequestMapping("/new")
     public void createUser(@RequestParam(name="login", required=true) String login,
                            @RequestParam(name="password", required=true) String password,
                            @RequestParam(name="name", required=false, defaultValue="anon") String name,
                            @RequestParam(name="sex", required=false, defaultValue="true") boolean sex) {
-        userDAO.createUser(new User(login, name, sex), password);
+        userDAO.create(new User(login, name, sex), password);
     }
 
-    // TODO: проверка поля
-    @RequestMapping("/get_user")
+    @RequestMapping("/get")
     public User getUser(@RequestParam(name ="id", required=true, defaultValue="1") int id) {
-        return userDAO.getUser(id);
+        return userDAO.get(id);
     }
 
     @RequestMapping("/get_users")
@@ -38,39 +40,35 @@ public class UserController {
         return userDAO.getUsers();
     }
 
-    // TODO: проверка полей
     @RequestMapping("/update_info")
     public void updateInfo(@RequestParam(name ="name", required=false, defaultValue="1") String name,
-                        @RequestParam(name ="login", required=false, defaultValue="1") String login,
-                        @RequestParam(name ="date_birthday", required=false, defaultValue="1") Date dateBirthday,
-                        @RequestParam(name ="sex", required=false, defaultValue="1") boolean sex) {
-        userDAO.updateUserInfo(new User(name, login, dateBirthday, sex));
+                           @RequestParam(name ="login", required=false, defaultValue="1") String login,
+                           @RequestParam(name ="date_birthday", required=false, defaultValue="1") Date dateBirthday,
+                           @RequestParam(name ="sex", required=false, defaultValue="1") boolean sex) {
+        userDAO.updateInfo(new User(name, login, dateBirthday, sex));
     }
 
-    // TODO: проверка пароля
+    // TODO: логика под проверку пароля
     @RequestMapping("/update_password")
     public void updatePassword(@RequestParam(name ="id", required=true, defaultValue="1") int id,
                                @RequestParam(name ="password", required=false, defaultValue="1") String password) {
-        userDAO.updateUserPassword(id, password);
+        userDAO.updatePassword(id, password);
     }
 
-    // TODO: проверка поля
     @RequestMapping("/update_status")
     public void updateStatus(@RequestParam(name ="id", required=true, defaultValue="1") int id,
                              @RequestParam(name ="status", required=false, defaultValue="1") String status) {
-        userDAO.updateUserStatus(id, status);
+        userDAO.updateStatus(id, status);
     }
 
-    // TODO: проверка поля
     @RequestMapping("/update_image")
     public void updateImage(@RequestParam(name ="id", required=true, defaultValue="1") int id,
                             @RequestParam(name ="image", required=false, defaultValue="1") String image) {
-        userDAO.updateUserImage(id, image);
+        userDAO.updateImage(id, image);
     }
 
-    // TODO: проверка поля
-    @RequestMapping("/delete_user")
+    @RequestMapping("/delete")
     public void deleteUser(@RequestParam(name ="id", required=true) int id) {
-        userDAO.deleteUser(id);
+        userDAO.delete(id);
     }
 }
