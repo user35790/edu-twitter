@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Comment {
 
-    private final int id;
+    private int id;
     private final int idCreator;
     private final int idTweet;
 
@@ -13,8 +13,7 @@ public class Comment {
     private String text;
 
 
-    public Comment(int id, int idCreator, int idTweet, String text) {
-        this.id = id;
+    public Comment(int idCreator, int idTweet, String text) {
         this.idCreator = idCreator;
         this.idTweet = idTweet;
         this.date = new Date();
