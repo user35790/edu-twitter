@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Tweet {
 
-    private final int id;
+    private int id;
     private final int idCreator;
 
     private Date dateLastWrite;
@@ -14,8 +14,7 @@ public class Tweet {
 
     private String text;
 
-    public Tweet(int id, int idCreator, String text) {
-        this.id = id;
+    public Tweet(int idCreator, String text) {
         this.idCreator = idCreator;
         this.dateLastWrite = new Date();
         this.text = text;
