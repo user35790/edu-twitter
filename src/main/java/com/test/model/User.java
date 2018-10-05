@@ -6,29 +6,47 @@ public class User {
 
     private int id;
     private String login;
-    private String password;
 
     private String name;
-    private int age;
+    private Date dateBirthday;
     private boolean sex;
     private String image;
 
     private String status;
-    private Date dateStart;
 
     private int[] tweets;
 
-    public User(int id, String login, String password) {
-        this.id = id;
+    // для создания нового пользователя
+    public User(String login, String name, boolean sex) {
         this.login = login;
-        this.password = password;
-        this.dateStart = new Date();
-
+        this.name = name;
+        this.sex = sex;
     }
 
-    public User(String login, String password) {
+    // для обновления информации о пользователе
+    public User(String login, String name, Date dateBirthday, boolean sex) {
         this.login = login;
-        this.password = password;
+        this.name = name;
+        this.dateBirthday = dateBirthday;
+        this.sex = sex;
+    }
+
+    // для получения полной анкеты пользователя
+    public User(String login, String name, Date dateBirthday, boolean sex, String image, String status) {
+        this.login = login;
+        this.name = name;
+        this.dateBirthday = dateBirthday;
+        this.sex = sex;
+        this.image = image;
+        this.status = status;
+    }
+
+    // для получения информации о пользователях
+    public User(int id, String login, String name, String image) {
+        this.id = id;
+        this.login = login;
+        this.name = name;
+        this.image = image;
     }
 
     public String getLogin() {
@@ -39,27 +57,19 @@ public class User {
         this.login = login;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
+    public Date getDateBirthday() {
+        return dateBirthday;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setDateBirthday(Date age) {
+        this.dateBirthday = age;
     }
 
-    public boolean isSex() {
+    public boolean getSex() {
         return sex;
     }
 
@@ -81,14 +91,6 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
     }
 
     public int[] getTweets() {
