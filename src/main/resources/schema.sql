@@ -4,9 +4,8 @@ login varchar (30) NOT NULL,
 password varchar (30) NOT NULL,
 
 name varchar (100),
-age int,
+date_birthday date,
 sex boolean,
-date_start date,
 
 status varchar (50),
 image varchar (300),
