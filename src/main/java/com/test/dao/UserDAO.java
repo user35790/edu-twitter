@@ -8,6 +8,8 @@ public interface UserDAO {
 
     Integer getCountUsers();
 
+    boolean check(String login, String password);
+
     boolean isLoginNotExist(String login);
 
     List<User> getUsers();

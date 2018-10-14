@@ -36,6 +36,12 @@ public class UserController {
         return userDAO.get(id);
     }
 
+    @RequestMapping("/check")
+    public boolean checkUser(@RequestParam(name="login") String login,
+                             @RequestParam(name="password") String password){
+        return userDAO.check(login, password);
+    }
+
     @RequestMapping("/get_users")
     public List<User> getUsers() {
         return userDAO.getUsers();

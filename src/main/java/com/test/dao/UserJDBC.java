@@ -24,6 +24,13 @@ public class UserJDBC implements UserDAO{
     }
 
     @Override
+    public boolean check(String login, String password) {
+        String sql = "SELECT COUNT(*) FROM users WHERE login = ? AND password = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, login, password);
+        return (count != null) ? true : false;
+    }
+
+    @Override
     public boolean isLoginNotExist(String login) {
         String sql = "SELECT COUNT(*) FROM users WHERE login = ?";
         Integer n = jdbcTemplate.queryForObject(sql, Integer.class, login);
