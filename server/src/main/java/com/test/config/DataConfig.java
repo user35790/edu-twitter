@@ -17,12 +17,7 @@ public class DataConfig {
 
     @Bean
     public String loadData(){
-        User user = new User();
-        user.setUsername("a");
-        user.setPassword("a");
-        user.setActive(true);
-        user.setRoles(Collections.singleton(UserRole.USER));
-        usersRepo.save(user);
+        usersRepo.save(new User("a", "a", true, Collections.singleton(UserRole.USER)));
         return "ok, bro";
     }
 }
