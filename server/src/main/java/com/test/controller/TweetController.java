@@ -25,8 +25,8 @@ public class TweetController {
                        Map<String, Object> map){
 
         Iterable<Tweet> tweets;
-        if (filter != ""){
-            tweets = tweetRepo.findByTag(filter);
+        if (!filter.isEmpty() && filter != ""){
+            tweets = tweetRepo.findByAuthor_Username(filter);
         } else {
             tweets = tweetRepo.findAll();
         }
@@ -36,16 +36,15 @@ public class TweetController {
         return "adminTweets";
     }
 
-    @PostMapping
+    @PostMapping("/user")
     public String add(@RequestParam String text,
-                      @RequestParam String tag,
                       @AuthenticationPrincipal User author,
                       Map<String, Object> map){
-        tweetRepo.save(new Tweet(author, text, tag));
+        tweetRepo.save(new Tweet(author, text));
 
-        Iterable<Tweet> tweets = tweetRepo.findAll();
+        Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         map.put("tweets", tweets);
 
-        return "adminTweets";
+        return "home";
     }
 }

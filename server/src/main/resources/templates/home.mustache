@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>Your home page</title>
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+    </form>
+    <a href="/">MAIN PAGE</a>
+</div>
+<div>
+    <div>Add <b>new tweet</b></div>
+    <form action="/tweet/user" method="post">
+        <input type="text" name="text"/>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+        <button type="submit">Add my tweet</button>
+    </form>
+</div>
+
+<div>
+    <div>My tweets</div>
+    {{#tweets}}
+        <div>
+            <i>{{text}}</i>
+        </div>
+    {{/tweets}}
+</div>
+</body>
+</html>
