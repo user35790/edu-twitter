@@ -1,1 +1,0 @@
-insert into usr(id,username, password, active) values(99, 'admin','admin', true )
