@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TweetRepo extends JpaRepository<Tweet, Integer> {
 
-    List<Tweet> findByTag(String tag);
+    List<Tweet> findByAuthor_Username(String username);
 }

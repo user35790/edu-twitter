@@ -14,12 +14,13 @@ public class Tweet {
     private User author;
 
     private String text;
-    private String tag;
 
-    public Tweet(User author, String text, String tag) {
+    public Tweet() {
+    }
+
+    public Tweet(User author, String text) {
         this.author = author;
         this.text = text;
-        this.tag = tag;
     }
 
     public Integer getId() {
@@ -44,13 +45,5 @@ public class Tweet {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 }
