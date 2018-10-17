@@ -14,6 +14,7 @@ public class Tweet {
     private User author;
 
     private String text;
+    private String filename;
 
     public Tweet() {
     }
@@ -45,5 +46,13 @@ public class Tweet {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }
