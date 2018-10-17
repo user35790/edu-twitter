@@ -22,16 +22,16 @@ public class DataLoadOnStartConfig {
 
     @Bean
     public String loadData(){
-        User user_admin = new User("admin", "admin", true, Collections.singleton(UserRole.USER));
+        User admin = new User("admin", "admin", true, Collections.singleton(UserRole.ADMIN));
         User user_a = new User("a", "a", true, Collections.singleton(UserRole.USER));
         User user_b = new User("b", "b", true, Collections.singleton(UserRole.USER));
         User user_c = new User("c", "c", true, Collections.singleton(UserRole.USER));
-        usersRepo.save(user_admin);
+        usersRepo.save(admin);
         usersRepo.save(user_a);
         usersRepo.save(user_b);
         usersRepo.save(user_c);
-        tweetRepo.save(new Tweet(user_admin, "test"));
-        tweetRepo.save(new Tweet(user_admin, "test2"));
+        tweetRepo.save(new Tweet(admin, "test"));
+        tweetRepo.save(new Tweet(admin, "test2"));
         tweetRepo.save(new Tweet(user_a, "a1"));
         tweetRepo.save(new Tweet(user_a, "a2"));
         tweetRepo.save(new Tweet(user_b, "b1"));

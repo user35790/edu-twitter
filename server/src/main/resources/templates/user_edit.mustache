@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>
+        Profile {{user.getUsername}}
+    </title>
+</head>
+
+<body>
+<form action="/user/edit" method="post">
+
+    <label>
+        USERNAME
+        <input type="text" name="username" value="{{user.getUsername}}">
+        Input your new username (more 3 symb)
+    </label>
+    <div>
+        <label><input type="checkbox" name="admin_role" {{#func_admin}}checked="checked"{{/func_admin}}>ADMIN</label>
+        <label><input type="checkbox" name="user_role" {{#func_user}}checked="checked"{{/func_user}}>USER</label>
+        Check your role
+    </div>
+    <input type="hidden" value="{{user.getId}}" name="userId">
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+
+    <button type="submit">Save</button>
+</form>
+
+
+
+</body>
+</html>

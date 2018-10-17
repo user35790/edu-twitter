@@ -10,17 +10,18 @@
     </form>
     <a href="/">MAIN PAGE</a>
 </div>
-    <form action="/user" method="post">
-        <div>Add new author</div>
-        <input type="text" name="login" placeholder="LOGIN">
-        <input type="text" name="password" placeholder="PASS">
+    <form action="/user/monitor/new" method="post">
+        <div>Add new user</div>
+        <input type="text" name="login" placeholder="Enter username here">
+        <input type="text" name="password" placeholder="Enter password here">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}">
-        <button type="submit">Add</button>
+        <button type="submit">Add user</button>
     </form>
 
+<b>List of all users</b>
 <dl>
     {{#users}}
-        <dt>{{username}}</dt>
+        <dt>{{username}} <a href="/user/edit">EDIT</a></dt>
         <dd>
             <ul>
                 <li>ID: {{id}}</li>
