@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @OneToMany
     private Set<Tweet> tweets;
 
+    private String email;
+    private String activationCode;
+
     public User() {
     }
 
@@ -111,5 +114,21 @@ public class User implements UserDetails {
 
     public void setTweets(Set<Tweet> tweets) {
         this.tweets = tweets;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
     }
 }

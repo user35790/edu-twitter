@@ -4,7 +4,7 @@ import com.test.model.Tweet;
 import com.test.model.User;
 import com.test.model.UserRole;
 import com.test.repos.TweetRepo;
-import com.test.repos.UsersRepo;
+import com.test.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.Collections;
 public class DataLoadOnStartConfig {
 
     @Autowired
-    private UsersRepo usersRepo;
+    private UserRepo userRepo;
 
     @Autowired
     private TweetRepo tweetRepo;
@@ -26,10 +26,10 @@ public class DataLoadOnStartConfig {
         User user_a = new User("a", "a", true, Collections.singleton(UserRole.USER));
         User user_b = new User("b", "b", true, Collections.singleton(UserRole.USER));
         User user_c = new User("c", "c", true, Collections.singleton(UserRole.USER));
-        usersRepo.save(admin);
-        usersRepo.save(user_a);
-        usersRepo.save(user_b);
-        usersRepo.save(user_c);
+        userRepo.save(admin);
+        userRepo.save(user_a);
+        userRepo.save(user_b);
+        userRepo.save(user_c);
         tweetRepo.save(new Tweet(admin, "test"));
         tweetRepo.save(new Tweet(admin, "test2"));
         tweetRepo.save(new Tweet(user_a, "a1"));

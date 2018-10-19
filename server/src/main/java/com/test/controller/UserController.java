@@ -3,7 +3,7 @@ package com.test.controller;
 import com.test.model.User;
 import com.test.model.UserRole;
 import com.test.repos.TweetRepo;
-import com.test.repos.UsersRepo;
+import com.test.repos.UserRepo;
 import com.test.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private UsersRepo usersRepo;
+    private UserRepo userRepo;
 
     @Autowired
     private UserService userService;
@@ -31,7 +31,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/monitor")
     public String main(Map<String, Object> map){
-        Iterable<User> users = usersRepo.findAll();
+        Iterable<User> users = userRepo.findAll();
         map.put("users", users);
         return "admin_users";
     }
@@ -41,8 +41,8 @@ public class UserController {
     public String add(@RequestParam String login,
                       @RequestParam String password,
                       Map<String, Object> map){
-        usersRepo.save(new User(login, password, true, Collections.singleton(UserRole.USER)));
-        map.put("users", usersRepo.findAll());
+        userRepo.save(new User(login, password, true, Collections.singleton(UserRole.USER)));
+        map.put("users", userRepo.findAll());
         return "admin_users";
     }
 
@@ -60,13 +60,13 @@ public class UserController {
             user.getRoles().clear();
             user.getRoles().add((admin_role)? UserRole.ADMIN : UserRole.USER);
         }
-        usersRepo.save(user);
+        userRepo.save(user);
         return "redirect:/user";
     }
 
     @GetMapping("/edit")
     public String editUser(@AuthenticationPrincipal User userSession, Model model){
-        User user = usersRepo.findFirstById(userSession.getId());
+        User user = userRepo.findFirstById(userSession.getId());
         model.addAttribute("user", user);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
