@@ -11,9 +11,8 @@
     </label>
     <div>
         Role
-        <label><input type="checkbox" name="admin_role" <#if func_admin>checked="checked"</#if>>ADMIN_r</label>
-        <label><input type="checkbox" name="user_role" <#if func_user>checked="checked"</#if>USER_r</label>
-        Check your role
+        <label><input type="checkbox" name="admin_role" <#if func_admin>checked="checked"</#if>>ADMIN</label>
+        <label><input type="checkbox" name="user_role" <#if func_user>checked="checked"</#if>>USER</label>
     </div>
     <input type="hidden" value="${user.id}" name="userId">
     <input type="hidden" name="_csrf" value="${_csrf.token}">

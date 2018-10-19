@@ -4,25 +4,23 @@
 
     <form action="/user/monitor/new" method="post">
         <div>Add new user</div>
-        <input type="text" name="login" class="form-control"placeholder="Enter username here">
-        <input type="text" name="password" placeholder="Enter password here">
+        <input type="text" name="login" class="form-control my-1" placeholder="Enter username here">
+        <input type="text" name="password" class="form-control my-1"  placeholder="Enter password here">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button class="btn btn-primary" type="submit">Add user</button>
     </form>
 
-<b>List of all users</b>
-<dl>
     <#list users as user>
-        <dt>${user.username} <a href="/user/edit/${user.id}">EDIT</a></dt>
-        <dd>
-            <ul>
-                <li>ID: ${user.id}</li>
-                <li>PASSWORD:${user.password}</li>
-            </ul>
-        </dd>
-        <#else>
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">${user.username}</h5>
+            <p class="card-text">id: ${user.id}</p>
+            <a href="/user/edit/${user.id}" class="btn btn-primary">Edit profile</a>
+        </div>
+    </div>
+    <#else>
         No users
     </#list>
-</dl>
+
 
 </@c.page>
