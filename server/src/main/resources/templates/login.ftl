@@ -2,8 +2,5 @@
 <#import "parts/authorization.ftl" as l>
 
 <@c.page>
-Login page
-<@l.login "/login"/>
-<a href="/registration">Add new author</a>
-
+<@l.login "/login" false/>
 </@c.page>

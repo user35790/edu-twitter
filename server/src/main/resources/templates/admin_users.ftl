@@ -1,17 +1,13 @@
 <#import "parts/common.ftl" as c>
-<#import "parts/authorization.ftl" as l>
 
 <@c.page>
 
-    <@l.logout/>
-    <a href="/">MAIN PAGE</a>
-
     <form action="/user/monitor/new" method="post">
         <div>Add new user</div>
-        <input type="text" name="login" placeholder="Enter username here">
+        <input type="text" name="login" class="form-control"placeholder="Enter username here">
         <input type="text" name="password" placeholder="Enter password here">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
-        <button type="submit">Add user</button>
+        <button class="btn btn-primary" type="submit">Add user</button>
     </form>
 
 <b>List of all users</b>

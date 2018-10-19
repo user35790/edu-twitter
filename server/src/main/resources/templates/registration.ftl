@@ -2,7 +2,7 @@
 <#import "parts/authorization.ftl" as l>
 
 <@c.page>
-<b>Add new author</b>
+<div class="mb-1">Add new author</div>
 ${message?ifExists}
-<@l.login "/registration" />
+<@l.login "/registration" true/>
 </@c.page>
