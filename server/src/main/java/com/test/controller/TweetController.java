@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class TweetController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/monitor")
     public String main(@RequestParam(required = false, defaultValue = "") String filter,
-                       Map<String, Object> map){
+                       Model model){
 
         Iterable<Tweet> tweets;
         if (!filter.isEmpty() && filter != ""){
@@ -41,7 +42,7 @@ public class TweetController {
             tweets = tweetRepo.findAll();
         }
 
-        map.put("tweets", tweets);
+        model.addAttribute("tweets", tweets);
 
         return "admin_tweets";
     }
@@ -50,13 +51,13 @@ public class TweetController {
     public String add(@RequestParam String text,
                       @RequestParam(name = "file", required = false) MultipartFile file,
                       @AuthenticationPrincipal User author,
-                      Map<String, Object> map) throws IOException {
+                      Model model) throws IOException {
         Tweet tweet = new Tweet(author, text);
 
-        if (file != null){
+        if (!file.isEmpty()){
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()){
-                System.out.println("AAAAAAAAAA");
+                System.out.println("where is dir, man");
             }
             String uuidFile = UUID.randomUUID().toString();
             String resultFilename = uuidFile + "." + file.getOriginalFilename();
@@ -70,7 +71,7 @@ public class TweetController {
 
 
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
-        map.put("tweets", tweets);
+        model.addAttribute("tweets", tweets);
 
         return "user_page";
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -64,19 +65,31 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String edit(@AuthenticationPrincipal User user, Map<String, Object> map){
-        map.put("user", user);
-        map.put("roles", UserRole.values());
-        map.put("func_user", user.getRoles().iterator().next() == (UserRole.USER));
-        map.put("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
+    public String editUser(@AuthenticationPrincipal User userSession, Model model){
+        User user = usersRepo.findFirstById(userSession.getId());
+        model.addAttribute("user", user);
+        model.addAttribute("roles", UserRole.values());
+        model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+        model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
         return "user_edit";
     }
 
-    @GetMapping("/hello")
-    public String greeting(@AuthenticationPrincipal User user,
-                           Map<String, Object> map) {
-        map.put("name", user.getUsername());
-        return "user_hello";
+    @GetMapping("/edit/{userEdit}")
+    public String edit(@PathVariable User userEdit,
+                       @AuthenticationPrincipal User userSession,
+                       Model model){
+        User user;
+        if ((userSession.getRoles().iterator().next() == UserRole.ADMIN) ||
+                (userEdit.getId().equals(userSession.getId()))){
+            user = userEdit;
+        } else {
+            user = userSession;
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("roles", UserRole.values());
+        model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+        model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
+        return "user_edit";
     }
 
     // AuthenticationPrincipal user не обновляется, сложно использовать
