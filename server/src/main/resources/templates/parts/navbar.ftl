@@ -2,7 +2,7 @@
 <#import "authorization.ftl" as a>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">Twitter</a>
+    <a class="navbar-brand" href="/">Twitter Clone</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -12,7 +12,7 @@
         <ul class="navbar-nav mr-auto">
 
             <li class="nav-item">
-                <a class="nav-link" href="/user">Home</a>
+                <a class="nav-link" href="/user">Profile</a>
             </li>
 
             <#if isAdmin>
@@ -20,7 +20,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
-                        Monitor
+                        Admin monitor
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/user/monitor">Users</a>
@@ -31,8 +31,8 @@
 
         </ul>
 
-        <div class="navbar-text mr-3">${name}</div>
-        <@a.log/>
+        <div class="navbar-text mr-3"></div>
+        <@a.btn_log/>
     </div>
 
 </nav>

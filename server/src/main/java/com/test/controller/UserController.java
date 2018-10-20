@@ -92,7 +92,6 @@ public class UserController {
         return "user_edit";
     }
 
-    // AuthenticationPrincipal user не обновляется, сложно использовать
     @GetMapping
     public String home(@AuthenticationPrincipal User user,
                        Map<String, Object> map) {

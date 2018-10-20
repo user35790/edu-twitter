@@ -3,11 +3,6 @@
 <@c.page>
 
 <div>
-    <div>
-        <a href="/user/edit/">EDIT PROFILE</a>
-    </div>
-
-
     <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
        aria-controls="collapseExample">
         Add tweet
@@ -16,14 +11,13 @@
         <div class="form-group mt-3">
             <form action="/tweet/add" method="post" enctype="multipart/form-data">
                 <input type="text" class="form-control" name="text"/>
-                <div class="custom-file">
-                    <input type="file" id="custom-file" name="file">
-                    <label class="custom-file-label">
-                        Choose file
-                    </label>
-                </div>
+
+                <label for="inputFile">Choose file</label>
+                <input type="file" id="inputFile" name="file">
+
                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                <button class="btn btn-primary" type="submit">Add tweet</button>
+
+                <button class="btn btn-primary" type="submit">Add</button>
             </form>
         </div>
     </div>

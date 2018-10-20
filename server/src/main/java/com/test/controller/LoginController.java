@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class RegistrationController {
+public class LoginController {
     @Autowired
     private UserService userService;
 
@@ -23,7 +23,7 @@ public class RegistrationController {
     public String addUser(User user, Model model){
 
         if (!userService.addUser(user)) {
-            model.addAttribute("message", "User exists!");
+            model.addAttribute("message", "User already exists!");
             return "registration";
         }
 
@@ -37,7 +37,7 @@ public class RegistrationController {
         boolean isActivate = userService.activateUser(code);
 
         if (isActivate){
-            model.addAttribute("message", "User successefully activated");
+            model.addAttribute("message", "User successfully activated");
         } else{
             model.addAttribute("mesasge", "Activation code is not found");
         }

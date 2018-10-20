@@ -2,6 +2,6 @@
 
 <@c.page>
 
-<h5>Hello, guest</h5>
-<div>This is simple clone off Twitter</div>
+<h5>Hello ${name?ifExists}</h5>
+<div>This is simple twitter-clone for my Java learning.</div>
 </@c.page>

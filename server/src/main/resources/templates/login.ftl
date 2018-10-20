@@ -2,6 +2,10 @@
 <#import "parts/authorization.ftl" as l>
 
 <@c.page>
-    ${message?ifExists}
+    <#if message??>
+        <div class="alert alert-warning" role="alert">
+            ${message}
+        </div>
+    </#if>
 <@l.login "/login" false/>
 </@c.page>
