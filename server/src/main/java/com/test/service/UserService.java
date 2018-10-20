@@ -27,21 +27,38 @@ public class UserService implements UserDetailsService {
         return userRepo.findByUsername(s);
     }
 
-    public boolean isCorrectUsername(String username){
-        return !(username.isEmpty()) && (username.length() > 3);
+    private boolean isCorrectName(String name){
+        return !(name.isEmpty()) && (name.length() > 3);
     }
 
-    public boolean addUser(User user){
+    private boolean isCorrectPassword(String password){
+        return !(password.isEmpty()) && (password.length() > 3);
+    }
 
-        User userFromDb = userRepo.findByUsername(user.getUsername());
-
-        if (userFromDb != null){
-            return false;
+    private String checkUser(User user){
+        if (!isCorrectName(user.getName())){
+            return "Name is not correct";
         }
 
+//        User userFromDb = userRepo.findByUsername(user.getUsername());
+////        if (userFromDb != null){
+////            return "User already exists!";
+////        }
+
+        if (!isCorrectPassword(user.getPassword())){
+            return "Password is not correct";
+        }
+        return "";
+    }
+    public String addUser(User user){
+        String result = checkUser(user);
+        if (!result.equals("")){
+            return result;
+        }
         user.setActive(true);
         user.setRoles(Collections.singleton(UserRole.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+
         userRepo.save(user);
 
         if (!StringUtils.isEmpty(user.getEmail())){
@@ -53,7 +70,7 @@ public class UserService implements UserDetailsService {
             );
             mailSender.send(user.getEmail(), "Activation code", message);
         }
-        return true;
+        return "ok";
     }
 
     public boolean activateUser(String code) {
@@ -67,5 +84,16 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
 
         return true;
+    }
+
+
+    public String editUserProfile(User user){
+        String message = checkUser(user);
+        if (!message.equals("")){
+            return message;
+        }
+
+        userRepo.save(user);
+        return "";
     }
 }

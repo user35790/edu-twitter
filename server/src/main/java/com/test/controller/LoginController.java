@@ -22,8 +22,9 @@ public class LoginController {
     @PostMapping("/registration")
     public String addUser(User user, Model model){
 
-        if (!userService.addUser(user)) {
-            model.addAttribute("message", "User already exists!");
+        String message = userService.addUser(user);
+        if (!message.equals("ok")) {
+            model.addAttribute("message", message);
             return "registration";
         }
 

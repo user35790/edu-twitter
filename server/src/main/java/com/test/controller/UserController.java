@@ -30,9 +30,9 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/monitor")
-    public String main(Map<String, Object> map){
+    public String main(Model model){
         Iterable<User> users = userRepo.findAll();
-        map.put("users", users);
+        model.addAttribute("users", users);
         return "admin_users";
     }
 
@@ -40,28 +40,39 @@ public class UserController {
     @PostMapping("/monitor/new")
     public String add(@RequestParam String login,
                       @RequestParam String password,
-                      Map<String, Object> map){
+                      Model model){
         userRepo.save(new User(login, password, true, Collections.singleton(UserRole.USER)));
-        map.put("users", userRepo.findAll());
+        model.addAttribute("users", userRepo.findAll());
         return "admin_users";
     }
 
     @PostMapping("/edit")
     public String editUser(@RequestParam("userId") User user,
-                           @RequestParam String username,
+                           @RequestParam String name,
+                           @RequestParam String about,
                            @RequestParam(required = false) boolean admin_role,
-                           @RequestParam(required = false) boolean user_role){
-
-        if (userService.isCorrectUsername(username)){
-            user.setUsername(username);
-        }
-
-        if (admin_role || user_role){
+                           @RequestParam(required = false) boolean user_role,
+                           Model model){
+        user.setName(name);
+        user.setAbout(about);
+        if (admin_role || user_role) {
             user.getRoles().clear();
-            user.getRoles().add((admin_role)? UserRole.ADMIN : UserRole.USER);
+            user.getRoles().add((admin_role) ? UserRole.ADMIN : UserRole.USER);
         }
-        userRepo.save(user);
+        String message = userService.editUserProfile(user);
+        if (!message.equals("")){
+            model.addAttribute("message", message);
+            model.addAttribute("user", user);
+            model.addAttribute("roles", UserRole.values());
+            model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+            model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
+            return "user_edit";
+        }
         return "redirect:/user";
+    }
+
+    private Model getModel(Model model, String m){
+        return model;
     }
 
     @GetMapping("/edit")
@@ -75,16 +86,7 @@ public class UserController {
     }
 
     @GetMapping("/edit/{userEdit}")
-    public String edit(@PathVariable User userEdit,
-                       @AuthenticationPrincipal User userSession,
-                       Model model){
-        User user;
-        if ((userSession.getRoles().iterator().next() == UserRole.ADMIN) ||
-                (userEdit.getId().equals(userSession.getId()))){
-            user = userEdit;
-        } else {
-            user = userSession;
-        }
+    public String edit(@PathVariable User user, Model model){
         model.addAttribute("user", user);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
@@ -94,8 +96,9 @@ public class UserController {
 
     @GetMapping
     public String home(@AuthenticationPrincipal User user,
-                       Map<String, Object> map) {
-        map.put("tweets", tweetRepo.findByAuthor_Username(user.getUsername()));
+                       Model model) {
+        model.addAttribute("tweets", tweetRepo.findByAuthor_Username(user.getUsername()));
+        model.addAttribute("userInfo", userRepo.findFirstById(user.getId()));
         return "user_page";
     }
 }

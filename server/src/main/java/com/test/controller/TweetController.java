@@ -73,6 +73,6 @@ public class TweetController {
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         model.addAttribute("tweets", tweets);
 
-        return "user_page";
+        return "redirect:/user";
     }
 }
