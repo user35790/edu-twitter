@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -48,6 +47,7 @@ public class UserController {
 
     @PostMapping("/edit")
     public String editUser(@RequestParam("userId") User user,
+                           @AuthenticationPrincipal User userSession,
                            @RequestParam String name,
                            @RequestParam String about,
                            @RequestParam(required = false) boolean admin_role,
@@ -68,7 +68,13 @@ public class UserController {
             model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
             return "user_edit";
         }
-        return "redirect:/user";
+
+        if (user.getId().equals(userSession.getId())){
+            return "redirect:/user";
+        } else {
+            return "redirect:/user/monitor";
+        }
+
     }
 
     private Model getModel(Model model, String m){
@@ -85,8 +91,9 @@ public class UserController {
         return "user_edit";
     }
 
-    @GetMapping("/edit/{userEdit}")
-    public String edit(@PathVariable User user, Model model){
+    @GetMapping("/edit/{userId}")
+    public String edit(@PathVariable Integer userId, Model model){
+        User user = userRepo.findFirstById(userId);
         model.addAttribute("user", user);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));

@@ -12,10 +12,8 @@
     </form>
 </div>
 
-<ul class="list-group">
     <#list tweets as tweet>
-        <li class="list-group-item my-2">
-            <div class="card">
+            <div class="card my-2">
 
                 <div class="card-body">
                     <h5 class="card-title">${tweet.author.username}</h5>
@@ -26,7 +24,6 @@
                 </#if>
                 </div>
             </div>
-        </li>
     <#else>
         <div class="alert alert-warning" role="alert">No tweets</div>
     </#list>

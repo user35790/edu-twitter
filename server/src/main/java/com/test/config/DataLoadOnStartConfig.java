@@ -23,9 +23,9 @@ public class DataLoadOnStartConfig {
     @Bean
     public String loadData(){
         User admin = new User("admin", "admin", true, Collections.singleton(UserRole.ADMIN));
-        User user_a = new User("a", "a", true, Collections.singleton(UserRole.USER));
-        User user_b = new User("b", "b", true, Collections.singleton(UserRole.USER));
-        User user_c = new User("c", "c", true, Collections.singleton(UserRole.USER));
+        User user_a = new User("a", "12345", true, Collections.singleton(UserRole.USER));
+        User user_b = new User("b", "12345", true, Collections.singleton(UserRole.USER));
+        User user_c = new User("c", "12345", true, Collections.singleton(UserRole.USER));
         userRepo.save(admin);
         userRepo.save(user_a);
         userRepo.save(user_b);
