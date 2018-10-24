@@ -19,7 +19,7 @@
                aria-expanded="false"
                aria-controls="collapseExample">Actions</a>
 
-            <a class="btn btn-primary" href="/user/edit" role="button">Edit</a>
+            <a class="btn btn-primary" href="/user/edit/0" role="button">Edit</a>
             <div class="collapse" id="collapseExample">
                 <div class="card border-primary my-3">
                     <div class="card-header text-center">Add tweet</div>

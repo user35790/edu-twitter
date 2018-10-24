@@ -53,19 +53,24 @@ public class UserController {
                            @RequestParam(required = false) boolean admin_role,
                            @RequestParam(required = false) boolean user_role,
                            Model model){
-        user.setName(name);
-        user.setAbout(about);
+        // TODO: delete about and name
+        if (!name.isEmpty()) {
+            user.setName(name);
+        }
+        if (!about.isEmpty()) {
+            user.setAbout(about);
+        }
         if (admin_role || user_role) {
             user.getRoles().clear();
             user.getRoles().add((admin_role) ? UserRole.ADMIN : UserRole.USER);
         }
         String message = userService.editUserProfile(user);
         if (!message.equals("")){
-            model.addAttribute("message", message);
-            model.addAttribute("user", user);
-            model.addAttribute("roles", UserRole.values());
-            model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
-            model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
+            model.addAttribute("message", message)
+                    .addAttribute("user", user)
+                    .addAttribute("roles", UserRole.values())
+                    .addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER))
+                    .addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
             return "user_edit";
         }
 
@@ -81,19 +86,26 @@ public class UserController {
         return model;
     }
 
-    @GetMapping("/edit")
-    public String editUser(@AuthenticationPrincipal User userSession, Model model){
-        User user = userRepo.findFirstById(userSession.getId());
-        model.addAttribute("user", user);
-        model.addAttribute("roles", UserRole.values());
-        model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
-        model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
-        return "user_edit";
-    }
+//    @GetMapping("/edit")
+//    public String editUser(@AuthenticationPrincipal User userSession, Model model){
+//        User user = userRepo.findFirstById(userSession.getId());
+//        model.addAttribute("user", user);
+//        model.addAttribute("roles", UserRole.values());
+//        model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+//        model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
+//        return "user_edit";
+//    }
 
     @GetMapping("/edit/{userId}")
-    public String edit(@PathVariable Integer userId, Model model){
-        User user = userRepo.findFirstById(userId);
+    public String edit(@PathVariable Integer userId,
+                       @AuthenticationPrincipal User userSession,
+                       Model model){
+        User user;
+        if (userId.equals(0)){
+            user = userRepo.findFirstById(userSession.getId());
+        } else {
+            user = userRepo.findFirstById(userId);
+        }
         model.addAttribute("user", user);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
