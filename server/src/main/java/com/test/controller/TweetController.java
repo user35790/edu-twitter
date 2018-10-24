@@ -3,8 +3,7 @@ package com.test.controller;
 import com.test.model.Tweet;
 import com.test.model.User;
 import com.test.repos.TweetRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.test.service.TweetService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,28 +14,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
-
 @Controller
 @RequestMapping("/tweet")
 public class TweetController {
 
-    @Autowired
-    private TweetRepo tweetRepo;
 
-    @Value("${upload.path}")
-    private String uploadPath;
+    private final TweetRepo tweetRepo;
+    private final TweetService tweetService;
+
+    public TweetController(TweetRepo tweetRepo, TweetService tweetService) {
+        this.tweetRepo = tweetRepo;
+        this.tweetService = tweetService;
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/monitor")
     public String main(@RequestParam(required = false, defaultValue = "") String filter,
-                       Model model){
+                       Model model) {
 
         Iterable<Tweet> tweets;
-        if (!filter.isEmpty() && filter != ""){
+        if (!filter.isEmpty()) {
             tweets = tweetRepo.findByAuthor_Username(filter);
         } else {
             tweets = tweetRepo.findAll();
@@ -51,25 +48,12 @@ public class TweetController {
     public String add(@RequestParam String text,
                       @RequestParam(name = "file", required = false) MultipartFile file,
                       @AuthenticationPrincipal User author,
-                      Model model) throws IOException {
+                      Model model) {
         Tweet tweet = new Tweet(author, text);
 
-        if (!file.isEmpty()){
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()){
-                System.out.println("where is dir, man");
-            }
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-            tweet.setFilename(resultFilename);
+        if (!file.isEmpty()) {
+            tweetService.addFileTweet(file, tweet);
         }
-
-        tweetRepo.save(tweet);
-
-
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         model.addAttribute("tweets", tweets);
 

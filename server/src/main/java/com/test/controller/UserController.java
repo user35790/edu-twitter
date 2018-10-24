@@ -5,7 +5,6 @@ import com.test.model.UserRole;
 import com.test.repos.TweetRepo;
 import com.test.repos.UserRepo;
 import com.test.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,9 +17,9 @@ import java.util.Collections;
 @RequestMapping("/user")
 public class UserController {
 
-    private UserRepo userRepo;
-    private UserService userService;
-    private TweetRepo tweetRepo;
+    private final UserRepo userRepo;
+    private final UserService userService;
+    private final TweetRepo tweetRepo;
 
     public UserController(UserRepo userRepo, UserService userService, TweetRepo tweetRepo) {
         this.userRepo = userRepo;
@@ -54,14 +53,8 @@ public class UserController {
                            @RequestParam(required = false) boolean admin_role,
                            @RequestParam(required = false) boolean user_role,
                            Model model) {
-        if (name != null) {
-            user.setName(name);
-        } else {
-            user.setName(null);
-        }
-        if (about != null) {
-            user.setAbout(about);
-        }
+        user.setName(name);
+        user.setAbout(about);
         if (admin_role || user_role) {
             user.getRoles().clear();
             user.getRoles().add((admin_role) ? UserRole.ADMIN : UserRole.USER);
@@ -81,7 +74,7 @@ public class UserController {
 
     }
 
-    private Model setModelEditUser(Model model, User user){
+    private Model setModelEditUser(Model model, User user) {
         model.addAttribute("user", user);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));

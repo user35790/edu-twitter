@@ -42,7 +42,7 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return roles.contains(UserRole.ADMIN);
     }
 

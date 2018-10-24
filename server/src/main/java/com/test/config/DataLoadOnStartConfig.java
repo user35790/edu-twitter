@@ -5,7 +5,6 @@ import com.test.model.User;
 import com.test.model.UserRole;
 import com.test.repos.TweetRepo;
 import com.test.repos.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +13,13 @@ import java.util.Collections;
 @Component
 public class DataLoadOnStartConfig {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final TweetRepo tweetRepo;
 
-    @Autowired
-    private TweetRepo tweetRepo;
+    public DataLoadOnStartConfig(UserRepo userRepo, TweetRepo tweetRepo) {
+        this.userRepo = userRepo;
+        this.tweetRepo = tweetRepo;
+    }
 
     @Bean
     public String loadData(){

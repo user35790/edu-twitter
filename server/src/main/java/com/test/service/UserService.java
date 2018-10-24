@@ -19,8 +19,8 @@ public class UserService implements UserDetailsService {
     private final static int PASSWORD_LENGTH = 5;
     private final static int USERNAME_LENGTH = 5;
 
-    private UserRepo userRepo;
-    private MailSender mailSender;
+    private final UserRepo userRepo;
+    private final MailSender mailSender;
 
     public UserService(UserRepo userRepo, MailSender mailSender) {
         this.userRepo = userRepo;
