@@ -15,6 +15,10 @@ import java.util.UUID;
 @Service
 public class UserService implements UserDetailsService {
 
+    private final static int NAME_LENGTH = 100;
+    private final static int PASSWORD_LENGTH = 5;
+    private final static int USERNAME_LENGTH = 5;
+
     private UserRepo userRepo;
     private MailSender mailSender;
 
@@ -29,36 +33,28 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean isCorrectName(String name) {
-        return (name != null) && !(name.isEmpty());
+        if (name != null) {
+            return (name.length() <= NAME_LENGTH);
+        } else {
+            return true;
+        }
     }
 
     private boolean isCorrectPassword(String password) {
-        return (password != null) && !(password.isEmpty()) && (password.length() > 3);
+        return password.length() >= PASSWORD_LENGTH;
     }
 
     private boolean isCorrectUsername(String username) {
-        return (username != null) && !(username.isEmpty()) && (username.length() > 3);
-    }
-
-    private String checkUser(User user) {
-        if (!isCorrectName(user.getName())) {
-            return "Name is not correct";
-        }
-
-//        User userFromDb = userRepo.findByUsername(user.getUsername());
-////        if (userFromDb != null){
-////            return "User already exists!";
-////        }
-
-        if (!isCorrectPassword(user.getPassword())) {
-            return "Password is not correct";
-        }
-        return "";
+        return username.length() >= USERNAME_LENGTH;
     }
 
     public String addUser(User user) {
         if (!isCorrectUsername(user.getUsername())) {
             return "Username is not correct";
+        }
+        User userFromDb = userRepo.findByUsername(user.getUsername());
+        if (userFromDb != null) {
+            return "User with this username already exists!";
         }
         if (!isCorrectPassword(user.getPassword())) {
             return "Password is not correct";
@@ -88,20 +84,19 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             return false;
         }
-
         user.setActivationCode(null);
         userRepo.save(user);
-
         return true;
     }
 
 
     public String editUserProfile(User user) {
-        String message = checkUser(user);
-        if (!message.equals("")) {
-            return message;
+        if (!isCorrectName(user.getName())) {
+            return "Name is not correct";
         }
-
+        if (!isCorrectPassword(user.getPassword())) {
+            return "Password is not correct";
+        }
         userRepo.save(user);
         return "";
     }

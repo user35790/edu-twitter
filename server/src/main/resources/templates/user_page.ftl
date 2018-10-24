@@ -10,9 +10,9 @@
 
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title"><#if userInfo.name??>${userInfo.name}<#else>Name</#if></h5>
+            <h5 class="card-title"><#if ((userInfo.name)?? && userInfo.name != "")>${userInfo.name}<#else>Name</#if></h5>
             <div class="card-text">
-                <pre><#if userInfo.about??>${userInfo.about}<#else>No about info.</#if></pre>
+                <pre><#if ((userInfo.about)?? && userInfo.about != "")>${userInfo.about}<#else>No about info.</#if></pre>
             </div>
 
             <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button"
