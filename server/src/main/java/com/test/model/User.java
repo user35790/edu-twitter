@@ -5,10 +5,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "usr")
+@Table(name = "tbl_user")
 public class User implements UserDetails {
 
     @Id
@@ -22,7 +23,7 @@ public class User implements UserDetails {
     private String about;
 
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "tbl_user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<UserRole> roles;
 
@@ -31,6 +32,20 @@ public class User implements UserDetails {
 
     private String email;
     private String activationCode;
+
+    @ManyToMany
+    @JoinTable(name = "tbl_friends",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "friendId")
+    )
+    private List<User> friends;
+
+    @ManyToMany
+    @JoinTable(name = "tbl_friends",
+            joinColumns = @JoinColumn(name = "friendId"),
+            inverseJoinColumns = @JoinColumn(name = "person_id")
+    )
+    private List<User> friendOf;
 
     public User() {
     }
@@ -149,5 +164,21 @@ public class User implements UserDetails {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
+
+    public List<User> getFriendOf() {
+        return friendOf;
+    }
+
+    public void setFriendOf(List<User> friendOf) {
+        this.friendOf = friendOf;
     }
 }

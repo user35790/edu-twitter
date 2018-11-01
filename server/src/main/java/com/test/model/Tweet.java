@@ -1,6 +1,8 @@
 package com.test.model;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Tweet {
@@ -15,6 +17,11 @@ public class Tweet {
 
     private String text;
     private String filename;
+
+    private Date date;
+    private int likes;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<User> likesOf;
 
     public Tweet() {
     }
@@ -54,5 +61,29 @@ public class Tweet {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public List<User> getLikesOf() {
+        return likesOf;
+    }
+
+    public void setLikesOf(List<User> likesOf) {
+        this.likesOf = likesOf;
     }
 }
