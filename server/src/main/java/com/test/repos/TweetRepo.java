@@ -8,4 +8,8 @@ import java.util.List;
 public interface TweetRepo extends JpaRepository<Tweet, Integer> {
 
     List<Tweet> findByAuthor_Username(String username);
+
+    Tweet findTopById(Integer id);
+
+    void deleteById(Integer id);
 }

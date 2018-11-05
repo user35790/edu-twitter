@@ -38,14 +38,14 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "friendId")
     )
-    private List<User> friends;
+    private Set<User> friends;
 
     @ManyToMany
     @JoinTable(name = "tbl_friends",
             joinColumns = @JoinColumn(name = "friendId"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private List<User> friendOf;
+    private Set<User> friendOf;
 
     public User() {
     }
@@ -166,19 +166,19 @@ public class User implements UserDetails {
         this.about = about;
     }
 
-    public List<User> getFriends() {
+    public Set<User> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(Set<User> friends) {
         this.friends = friends;
     }
 
-    public List<User> getFriendOf() {
+    public Set<User> getFriendOf() {
         return friendOf;
     }
 
-    public void setFriendOf(List<User> friendOf) {
+    public void setFriendOf(Set<User> friendOf) {
         this.friendOf = friendOf;
     }
 }

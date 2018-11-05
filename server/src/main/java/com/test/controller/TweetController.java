@@ -8,10 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -57,6 +54,29 @@ public class TweetController {
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         model.addAttribute("tweets", tweets);
 
+        return "redirect:/user";
+    }
+
+    @DeleteMapping("/{tweetId}")
+    public void delete(@PathVariable Integer tweetId) {
+        tweetService.deleteTweet(tweetId);
+    }
+
+
+    @GetMapping("/edit/{tweet}")
+    public String getEditPage(@PathVariable Tweet tweet,
+                              Model model) {
+        model.addAttribute("tweet", tweet);
+        return "tweet_edit";
+    }
+
+    @PostMapping("/edit/")
+    public String edit(@AuthenticationPrincipal User user,
+                       @RequestParam Integer id,
+                       @RequestParam String text,
+                       @RequestParam(required = false) String filename,
+                       Model model) {
+        tweetService.editTweet(id, text, filename);
         return "redirect:/user";
     }
 }

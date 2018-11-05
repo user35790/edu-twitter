@@ -66,6 +66,7 @@
                     <div class="card-text">
                         ${tweet.text}
                     </div>
+                    <a class="btn btn-primary" href="/tweet/edit/${tweet.id}">Edit tweet</a>
                 </div>
             </div>
         <#else>

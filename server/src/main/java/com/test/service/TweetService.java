@@ -40,4 +40,17 @@ public class TweetService {
 
         tweetRepo.save(tweet);
     }
+
+    public void deleteTweet(Integer tweetId) {
+        tweetRepo.deleteById(tweetId);
+    }
+
+    public void editTweet(Integer id, String text, String filename) {
+        Tweet tweet = tweetRepo.findTopById(id);
+
+        tweet.setText(text);
+        tweet.setFilename(filename);
+
+        tweetRepo.save(tweet);
+    }
 }
