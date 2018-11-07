@@ -50,6 +50,8 @@ public class TweetController {
 
         if (!file.isEmpty()) {
             tweetService.addFileTweet(file, tweet);
+        } else {
+            tweetRepo.save(tweet);
         }
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         model.addAttribute("tweets", tweets);
@@ -57,17 +59,24 @@ public class TweetController {
         return "redirect:/user";
     }
 
-    @DeleteMapping("/{tweetId}")
-    public void delete(@PathVariable Integer tweetId) {
+
+    @PostMapping("/delete/{tweetId}")
+    public String delete(@PathVariable Integer tweetId) {
         tweetService.deleteTweet(tweetId);
+        return "redirect:/user";
     }
 
 
     @GetMapping("/edit/{tweet}")
     public String getEditPage(@PathVariable Tweet tweet,
+                              @AuthenticationPrincipal User user,
                               Model model) {
-        model.addAttribute("tweet", tweet);
-        return "tweet_edit";
+        if (tweet.getAuthor().getId().equals(user.getId())) {
+            model.addAttribute("tweet", tweet);
+            return "tweet_edit";
+        } else {
+            return "redirect:/user";
+        }
     }
 
     @PostMapping("/edit/")

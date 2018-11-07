@@ -1,4 +1,5 @@
 <#import "parts/common.ftl" as c>
+<#import "parts/part.ftl" as l>
 
 <@c.page>
 
@@ -12,20 +13,7 @@
     </form>
 </div>
 
-    <#list tweets as tweet>
-            <div class="card my-2">
+    <@l.tw tweets/>
 
-                <div class="card-body">
-                    <h5 class="card-title">${tweet.author.username}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">id: ${tweet.id}</h6>
-                    <p class="card-text">text: ${tweet.text}</p>
-                <#if tweet.filename??>
-                    <p class="card-text">file: <img style="width: 100px" class="card-img-top" src="/img/${tweet.filename}"></p>
-                </#if>
-                </div>
-            </div>
-    <#else>
-        <div class="alert alert-warning" role="alert">No tweets</div>
-    </#list>
 
 </@c.page>

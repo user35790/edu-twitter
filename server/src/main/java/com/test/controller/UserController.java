@@ -102,4 +102,12 @@ public class UserController {
         model.addAttribute("userInfo", userRepo.findFirstById(user.getId()));
         return "user_page";
     }
+
+    @GetMapping("/{user}")
+    public String getUserPage(@PathVariable User user,
+                              Model model) {
+        model.addAttribute("tweets", tweetRepo.findByAuthor_Username(user.getUsername()));
+        model.addAttribute("userInfo", userRepo.findFirstById(user.getId()));
+        return "user_page";
+    }
 }
