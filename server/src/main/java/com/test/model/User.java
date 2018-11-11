@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,19 +34,19 @@ public class User implements UserDetails {
     private String email;
     private String activationCode;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "tbl_friends",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "friendId")
     )
-    private Set<User> friends;
+    private Set<User> friends = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "tbl_friends",
             joinColumns = @JoinColumn(name = "friendId"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private Set<User> friendOf;
+    private Set<User> friendOf = new HashSet<>();
 
     public User() {
     }

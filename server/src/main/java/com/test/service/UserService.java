@@ -100,4 +100,34 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
         return "";
     }
+
+    public void addSubscriber(Integer userSubscrId, User user) {
+        if (!user.getId().equals(userSubscrId)) {
+            User subscriber = userRepo.findFirstById(userSubscrId);
+            User currentUSer = userRepo.findFirstById(user.getId());
+            if (!subscriber.getFriends().contains(currentUSer)) {
+                subscriber.getFriends().add(currentUSer);
+                userRepo.save(subscriber);
+            } else {
+                System.out.println("already contains");
+            }
+        } else {
+            System.out.println("no allow to subscr on current");
+        }
+    }
+
+    public void deleteSubscribe(Integer userSubscrId, User user) {
+        if (!user.getId().equals(userSubscrId)) {
+            User subscriber = userRepo.findFirstById(userSubscrId);
+            User currentUSer = userRepo.findFirstById(user.getId());
+            if (subscriber.getFriends().contains(currentUSer)) {
+                subscriber.getFriends().remove(currentUSer);
+                userRepo.save(subscriber);
+            } else {
+                System.out.println("no user");
+            }
+        } else {
+            System.out.println("no allow to subscr on current");
+        }
+    }
 }

@@ -99,15 +99,54 @@ public class UserController {
     @GetMapping
     public String home(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("tweets", tweetRepo.findByAuthor_Username(user.getUsername()));
-        model.addAttribute("userInfo", userRepo.findFirstById(user.getId()));
+        model.addAttribute("user", userRepo.findFirstById(user.getId()));
+        model.addAttribute("isAuth", true);
         return "user_page";
     }
 
     @GetMapping("/{user}")
     public String getUserPage(@PathVariable User user,
+                              @AuthenticationPrincipal User currentUser,
                               Model model) {
+        if (user.getId().equals(currentUser.getId())){
+            model.addAttribute("isAuth", true);
+        } else {
+            User userC = userRepo.findFirstById(currentUser.getId());
+            model.addAttribute("isSubscriber", user.getFriends().contains(userC));
+            model.addAttribute("isAuth", false);
+        }
         model.addAttribute("tweets", tweetRepo.findByAuthor_Username(user.getUsername()));
-        model.addAttribute("userInfo", userRepo.findFirstById(user.getId()));
+        model.addAttribute("user", userRepo.findFirstById(user.getId()));
         return "user_page";
+    }
+
+    @PostMapping("/subscribe")
+    public String addSubscriber(@RequestParam Integer userSubscrId,
+                                @AuthenticationPrincipal User user) {
+        userService.addSubscriber(userSubscrId, user);
+        return "redirect:/user";
+    }
+
+    @PostMapping("/unsubscribe")
+    public String deleteSubscriber(@RequestParam Integer userSubscrId,
+                                   @AuthenticationPrincipal User user) {
+        userService.deleteSubscribe(userSubscrId, user);
+        return "redirect:/user";
+    }
+
+    @GetMapping("/subscriptions/{user}")
+    public String getSubscriptions(@PathVariable User user,
+                                   Model model){
+        model.addAttribute("isSubscriptions", true);
+        model.addAttribute("users", user.getFriendOf());
+        return "subscr";
+    }
+
+    @GetMapping("/subscribers/{user}")
+    public String getSubscribers(@PathVariable User user,
+                                   Model model){
+        model.addAttribute("isSubscriptions", false);
+        model.addAttribute("users", user.getFriends());
+        return "subscr";
     }
 }
