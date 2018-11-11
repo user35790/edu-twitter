@@ -42,15 +42,28 @@ public class TweetService {
     }
 
     public void deleteTweet(Integer tweetId) {
-        tweetRepo.deleteById(tweetId);
+        Tweet tweet = tweetRepo.findTopById(tweetId);
+        if (deleteFile(tweet.getFilename())) {
+            tweetRepo.deleteById(tweetId);
+        } else {
+            System.out.println("where is fucking file, man");
+        }
     }
 
-    public void editTweet(Integer id, String text, String filename) {
+    private boolean deleteFile(String filename) {
+        File file = new File(uploadPath + "/" + filename);
+        return file.delete();
+    }
+
+    public void editTweet(Integer id, String text, MultipartFile filename) {
         Tweet tweet = tweetRepo.findTopById(id);
 
-        tweet.setText(text);
-        tweet.setFilename(filename);
+        if (!tweet.getText().equals(text)) {
+            tweet.setText(text);
+        }
 
-        tweetRepo.save(tweet);
+        if (!filename.isEmpty()) {
+            addFileTweet(filename, tweet);
+        }
     }
 }

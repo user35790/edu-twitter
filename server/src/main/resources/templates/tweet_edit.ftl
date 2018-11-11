@@ -15,7 +15,7 @@
         <div class="col-sm-10">
             <div class="custom-file">
                 <input type="file" class="custom-file-input my-2 " id="inputGroupFile01"
-                       aria-describedby="inputGroupFileAddon01" name="file">
+                       aria-describedby="inputGroupFileAddon01" name="filename">
                 <label class="custom-file-label" for="inputGroupFile01"><#if tweet.filename??>${tweet.filename}</#if></label>
             </div>
         </div>

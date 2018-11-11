@@ -83,9 +83,9 @@ public class TweetController {
     public String edit(@AuthenticationPrincipal User user,
                        @RequestParam Integer id,
                        @RequestParam String text,
-                       @RequestParam(required = false) String filename,
+                       @RequestParam(name = "file", required = false) MultipartFile file,
                        Model model) {
-        tweetService.editTweet(id, text, filename);
+        tweetService.editTweet(id, text, file);
         return "redirect:/user";
     }
 }
