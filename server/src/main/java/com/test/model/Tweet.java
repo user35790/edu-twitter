@@ -1,6 +1,7 @@
 package com.test.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +16,15 @@ public class Tweet {
     @JoinColumn(name = "user_id")
     private User author;
 
+    @NotBlank(message = "Message cannot be empty")
     private String text;
+
     private String filename;
 
     private Date date;
+
     private int likes;
+
     @OneToMany(fetch = FetchType.EAGER)
     private List<User> likesOf;
 

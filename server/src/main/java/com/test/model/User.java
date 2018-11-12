@@ -4,9 +4,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,11 +17,17 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @NotBlank(message = "Username cannot be empty")
     private String username;
+
+    @NotBlank(message = "Password cannot be empty")
     private String password;
+
     private boolean active;
 
     private String name;
+
     private String about;
 
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
@@ -31,7 +38,9 @@ public class User implements UserDetails {
     @OneToMany
     private Set<Tweet> tweets;
 
+    @Email(message = "Email is not correct")
     private String email;
+
     private String activationCode;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
