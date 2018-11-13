@@ -1,22 +1,34 @@
 package com.test.controller;
 
 import com.test.model.User;
+import com.test.model.dto.CaptchaResponceDto;
 import com.test.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/registration")
 public class LoginController {
 
-    private UserService userService;
+    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
-    public LoginController(UserService userService) {
+    private final UserService userService;
+    private final RestTemplate restTemplate;
+
+    @Value("${recaptha.secret}")
+    private String recaptchaSecret;
+
+    public LoginController(UserService userService, RestTemplate restTemplate) {
         this.userService = userService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping
@@ -25,16 +37,36 @@ public class LoginController {
     }
 
     @PostMapping
-    public String addUser(User user, Model model) {
-        String message = userService.addUser(user);
+    public String addUser(@RequestParam("g-recaptcha-response") String captchaResponse,
+                          @Valid User user,
+                          BindingResult bindingResult,
+                          Model model) {
+        String url = String.format(CAPTCHA_URL, recaptchaSecret, captchaResponse);
+        CaptchaResponceDto response = restTemplate.postForObject(url, Collections.emptyList(),
+                CaptchaResponceDto.class);
 
-        if (!message.isEmpty()) {
-            model.addAttribute("message", message);
+        if (!response.isSuccess()) {
+            model.addAttribute("captchaError", "Fill captcha");
+            model.addAttribute("user", user);
             return "registration";
-        } else {
+        }
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = ControllerUtil.getErrors(bindingResult);
+            model.mergeAttributes(errorMap);
+            model.addAttribute("user", user);
+            return "registration";
+        }
+
+        Map<String, Object> result = userService.addUser(user);
+        if (result.isEmpty()) {
             model.addAttribute("message", "User successfully create");
             return "login";
+        } else {
+            model.mergeAttributes(result);
+            return "registration";
         }
+
     }
 
     @GetMapping("/activate/{code}")
