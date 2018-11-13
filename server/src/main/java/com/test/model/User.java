@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<UserRole> roles;
 
-    @OneToMany
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tweet> tweets;
 
     @Email(message = "Email is not correct")
@@ -56,6 +56,14 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
     private Set<User> friendOf = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "tweets_likes",
+            joinColumns = { @JoinColumn(name = "user_id")},
+            inverseJoinColumns = { @JoinColumn(name = "tweet_id")}
+    )
+    private Set<Tweet> liked;
 
     public User() {
     }
@@ -190,5 +198,13 @@ public class User implements UserDetails {
 
     public void setFriendOf(Set<User> friendOf) {
         this.friendOf = friendOf;
+    }
+
+    public Set<Tweet> getLiked() {
+        return liked;
+    }
+
+    public void setLiked(Set<Tweet> liked) {
+        this.liked = liked;
     }
 }
