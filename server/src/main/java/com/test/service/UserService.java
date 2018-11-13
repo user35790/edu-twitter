@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -51,17 +52,18 @@ public class UserService implements UserDetailsService {
         return username.length() >= USERNAME_LENGTH;
     }
 
-    public String addUser(User user) {
+    public Map<String, Object> addUser(User user) {
         if (!isCorrectUsername(user.getUsername())) {
-            return "Username is not correct";
+            return Collections.singletonMap("usernameError", "Username too small");
+        }
+        if (!isCorrectPassword(user.getPassword())) {
+            return Collections.singletonMap("passwordError", "Password too small");
         }
         User userFromDb = userRepo.findByUsername(user.getUsername());
         if (userFromDb != null) {
-            return "User with this username already exists!";
+            return Collections.singletonMap("usernameError", "Username already exist");
         }
-        if (!isCorrectPassword(user.getPassword())) {
-            return "Password is not correct";
-        }
+
         user.setActive(true);
         user.setRoles(Collections.singleton(UserRole.USER));
         user.setActivationCode(UUID.randomUUID().toString());
@@ -79,7 +81,7 @@ public class UserService implements UserDetailsService {
             );
             mailSender.send(user.getEmail(), "Activation code", message);
         }
-        return "";
+        return Collections.emptyMap();
     }
 
     public boolean activateUser(String code) {

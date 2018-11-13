@@ -2,5 +2,5 @@
 <#import "parts/part.ftl" as l>
 
 <@c.page>
-    <@l.subscr users isSubscriptions></@l.subscr>
+    <@l.subscr users title></@l.subscr>
 </@c.page>

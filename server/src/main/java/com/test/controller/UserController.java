@@ -137,16 +137,16 @@ public class UserController {
     @GetMapping("/subscriptions/{user}")
     public String getSubscriptions(@PathVariable User user,
                                    Model model){
-        model.addAttribute("isSubscriptions", true);
+        model.addAttribute("title", "Subscriptions");
         model.addAttribute("users", user.getFriendOf());
-        return "subscr";
+        return "user_list";
     }
 
     @GetMapping("/subscribers/{user}")
     public String getSubscribers(@PathVariable User user,
                                    Model model){
-        model.addAttribute("isSubscriptions", false);
+        model.addAttribute("title", "Subscribers");
         model.addAttribute("users", user.getFriends());
-        return "subscr";
+        return "user_list";
     }
 }
