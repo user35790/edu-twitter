@@ -45,7 +45,8 @@
             <h5 class="card-title"><#if ((userInfo.name)?? && userInfo.name != "")>${userInfo.name}<#else>
                 Name</#if></h5>
             <div class="card-text">
-                <pre><#if ((userInfo.about)?? && userInfo.about != "")>${userInfo.about}<#else>No about info.</#if></pre>
+                <pre><#if ((userInfo.about)?? && userInfo.about != "")>${userInfo.about}<#else>
+                    No about info.</#if></pre>
             </div>
 
 
@@ -86,7 +87,7 @@
                aria-expanded="false"
                aria-controls="collapseExample">Actions</a>
 
-            <div class="collapse" id="collapseExample">
+            <div class="collapse <#if tweet??>show</#if>" id="collapseExample">
                 <div class="card border-primary my-3">
                     <div class="card-header text-center">Add tweet</div>
                     <div class="card-body text-primary">
@@ -96,7 +97,14 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Your tweet</span>
                                 </div>
-                                <textarea class="form-control" aria-label="With textarea" name="text"></textarea>
+                                <textarea class="form-control ${(textError??)?string('is-invalid', '')}"
+                                          value="<#if tweet??>${tweet.text}</#if>" name="text"
+                                          placeholder="Input your text here"></textarea>
+                                <#if textError??>
+                                <div class="invalid-feedback">
+                                    ${textError}
+                                </div>
+                                </#if>
                             </div>
 
                             <div class="input-group my-2">
@@ -119,19 +127,19 @@
             </div>
             <#else>
 
-            <#if !isSubscriber>
+                <#if !isSubscriber>
                 <form action="/user/subscribe" method="post">
                     <input type="hidden" name="userSubscrId" value="${userInfo.id}"/>
                     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                     <button class="btn btn-primary" type="submit">Subscribe</button>
                 </form>
-            <#else>
+                <#else>
             <form action="/user/unsubscribe" method="post">
                 <input type="hidden" name="userSubscrId" value="${userInfo.id}"/>
                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                 <button class="btn btn-primary" type="submit">Unsubscribe</button>
             </form>
-            </#if>
+                </#if>
 
             </#if>
         </div>
@@ -139,19 +147,14 @@
 </#macro>
 
 
-<#macro subscr users isSubscriptions>
+<#macro subscr users title>
 
 <div class="card">
 
     <div class="card-body">
         <div class="card-title">
-    <#if isSubscriptions>
-        Subscriptions
-    <#else>
-        Subscribers
-    </#if>
+            <h3>${title}</h3>
         </div>
-
 
     <#list users as user>
             <div class="card my-3">

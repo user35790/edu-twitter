@@ -43,11 +43,9 @@ public class TweetService {
 
     public void deleteTweet(Integer tweetId) {
         Tweet tweet = tweetRepo.findTopById(tweetId);
-        if (deleteFile(tweet.getFilename())) {
-            tweetRepo.deleteById(tweetId);
-        } else {
-            System.out.println("where is fucking file, man");
-        }
+        File file = new File(uploadPath + "/" + tweet.getFilename());
+        file.delete();
+        tweetRepo.deleteById(tweetId);
     }
 
     private boolean deleteFile(String filename) {
@@ -55,15 +53,17 @@ public class TweetService {
         return file.delete();
     }
 
-    public void editTweet(Integer id, String text, MultipartFile filename) {
-        Tweet tweet = tweetRepo.findTopById(id);
-
-        if (!tweet.getText().equals(text)) {
-            tweet.setText(text);
+    public void editTweet(Tweet tweetT, MultipartFile filename) {
+        Tweet tweet = tweetRepo.findTopById(tweetT.getId());
+        if (!tweet.getText().equals(tweetT.getText())) {
+            tweet.setText(tweetT.getText());
         }
 
-        if (!filename.isEmpty()) {
-            addFileTweet(filename, tweet);
+        if (!filename.isEmpty()){
+            addFileTweet(filename,tweet);
+        } else {
+
+            tweetRepo.save(tweet);
         }
     }
 }

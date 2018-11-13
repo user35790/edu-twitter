@@ -8,8 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/tweet")
@@ -42,17 +46,29 @@ public class TweetController {
     }
 
     @PostMapping("/add")
-    public String add(@RequestParam String text,
-                      @RequestParam(name = "file", required = false) MultipartFile file,
+    public String add(@Valid Tweet tweet,
+                      BindingResult bindingResult,
+                      Model model,
                       @AuthenticationPrincipal User author,
-                      Model model) {
-        Tweet tweet = new Tweet(author, text);
-
-        if (!file.isEmpty()) {
-            tweetService.addFileTweet(file, tweet);
+                      @RequestParam(required = false) MultipartFile file) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = ControllerUtil.getErrors(bindingResult);
+            model.mergeAttributes(errorMap);
+            model.addAttribute("tweet", tweet);
+            return "user_page";
         } else {
-            tweetRepo.save(tweet);
+
+            tweet.setAuthor(author);
+
+            if (!file.isEmpty()) {
+                tweetService.addFileTweet(file, tweet);
+            } else {
+                model.addAttribute("tweet", null);
+                tweetRepo.save(tweet);
+            }
         }
+
+
         Iterable<Tweet> tweets = tweetRepo.findByAuthor_Username(author.getUsername());
         model.addAttribute("tweets", tweets);
 
@@ -79,13 +95,28 @@ public class TweetController {
         }
     }
 
-    @PostMapping("/edit/")
+    @PostMapping("/edit")
     public String edit(@AuthenticationPrincipal User user,
-                       @RequestParam Integer id,
-                       @RequestParam String text,
-                       @RequestParam(name = "file", required = false) MultipartFile file,
-                       Model model) {
-        tweetService.editTweet(id, text, file);
-        return "redirect:/user";
+                       @Valid Tweet tweet,
+                       BindingResult bindingResult,
+                       Model model,
+                       @RequestParam(required = false) MultipartFile file) {
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors = ControllerUtil.getErrors(bindingResult);
+            model.mergeAttributes(errors);
+            model.addAttribute("tweet", tweet);
+            return "tweet_edit";
+        } else {
+            tweetService.editTweet(tweet, file);
+            return "redirect:/user";
+        }
+    }
+
+    @GetMapping("{tweet}/likes/list")
+    public String getListOfUsersHowLikes(@PathVariable Tweet tweet,
+                                         Model model) {
+//        model.addAttribute("users", tweetRepo.);
+        model.addAttribute("title", "Users who like this tweet");
+        return "user_list";
     }
 }
