@@ -1,10 +1,13 @@
 package com.test.controller;
 
+import com.test.Application;
 import com.test.model.User;
 import com.test.model.UserRole;
 import com.test.repos.TweetRepo;
 import com.test.repos.UserRepo;
 import com.test.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,8 @@ import java.util.Collections;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     private final UserRepo userRepo;
     private final UserService userService;
@@ -41,6 +46,7 @@ public class UserController {
                       @RequestParam String password,
                       Model model) {
         userRepo.save(new User(login, password, true, Collections.singleton(UserRole.USER)));
+        LOGGER.info("Create new user @{}", login);
         model.addAttribute("users", userRepo.findAll());
         return "admin_users";
     }
@@ -63,6 +69,7 @@ public class UserController {
         if (!message.equals("")) {
             model.addAttribute("message", message);
             model = setModelEditUser(model, user);
+            LOGGER.info("Edit user #{}", user.getId());
             return "user_edit";
         }
 
@@ -108,7 +115,7 @@ public class UserController {
     public String getUserPage(@PathVariable User user,
                               @AuthenticationPrincipal User currentUser,
                               Model model) {
-        if (user.getId().equals(currentUser.getId())){
+        if (user.getId().equals(currentUser.getId())) {
             model.addAttribute("isAuth", true);
         } else {
             User userC = userRepo.findFirstById(currentUser.getId());
@@ -136,7 +143,7 @@ public class UserController {
 
     @GetMapping("/subscriptions/{user}")
     public String getSubscriptions(@PathVariable User user,
-                                   Model model){
+                                   Model model) {
         model.addAttribute("title", "Subscriptions");
         model.addAttribute("users", user.getFriendOf());
         return "user_list";
@@ -144,7 +151,7 @@ public class UserController {
 
     @GetMapping("/subscribers/{user}")
     public String getSubscribers(@PathVariable User user,
-                                   Model model){
+                                 Model model) {
         model.addAttribute("title", "Subscribers");
         model.addAttribute("users", user.getFriends());
         return "user_list";

@@ -4,6 +4,8 @@ import com.test.model.Tweet;
 import com.test.model.User;
 import com.test.repos.TweetRepo;
 import com.test.service.TweetService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/tweet")
 public class TweetController {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(TweetController.class);
 
     private final TweetRepo tweetRepo;
     private final TweetService tweetService;
@@ -52,6 +55,7 @@ public class TweetController {
                       @AuthenticationPrincipal User author,
                       @RequestParam(required = false) MultipartFile file) {
         if (bindingResult.hasErrors()) {
+            LOGGER.warn("Errors in valid tweet add");
             Map<String, String> errorMap = ControllerUtil.getErrors(bindingResult);
             model.mergeAttributes(errorMap);
             model.addAttribute("tweet", tweet);
@@ -66,6 +70,9 @@ public class TweetController {
                 model.addAttribute("tweet", null);
                 tweetRepo.save(tweet);
             }
+
+            LOGGER.info("New tweet @{} added: text: {} ; file: {}", author.getUsername(),
+                    tweet.getText(), tweet.getFilename());
         }
 
 
@@ -79,6 +86,7 @@ public class TweetController {
     @PostMapping("/delete/{tweetId}")
     public String delete(@PathVariable Integer tweetId) {
         tweetService.deleteTweet(tweetId);
+        LOGGER.info("Tweet {} is delete", tweetId);
         return "redirect:/user";
     }
 
@@ -101,7 +109,7 @@ public class TweetController {
                        BindingResult bindingResult,
                        Model model,
                        @RequestParam(required = false) MultipartFile file) {
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             Map<String, String> errors = ControllerUtil.getErrors(bindingResult);
             model.mergeAttributes(errors);
             model.addAttribute("tweet", tweet);

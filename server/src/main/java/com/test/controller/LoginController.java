@@ -3,6 +3,8 @@ package com.test.controller;
 import com.test.model.User;
 import com.test.model.dto.CaptchaResponceDto;
 import com.test.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class LoginController {
 
     private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    private final static Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     private final UserService userService;
     private final RestTemplate restTemplate;
@@ -61,9 +64,11 @@ public class LoginController {
         Map<String, Object> result = userService.addUser(user);
         if (result.isEmpty()) {
             model.addAttribute("message", "User successfully create");
+            LOGGER.info("User @%{} create", user.getUsername());
             return "login";
         } else {
             model.mergeAttributes(result);
+            LOGGER.warn("User not create");
             return "registration";
         }
 
