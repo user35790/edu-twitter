@@ -2,13 +2,20 @@ package com.test.service;
 
 import com.test.model.User;
 import com.test.model.UserRole;
+import com.test.model.dto.CaptchaResponceDto;
 import com.test.repos.UserRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
@@ -17,18 +24,26 @@ import java.util.UUID;
 @Service
 public class UserService implements UserDetailsService {
 
-    private final static int NAME_LENGTH = 100;
-    private final static int PASSWORD_LENGTH = 5;
-    private final static int USERNAME_LENGTH = 5;
+    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
+    @Value("${twitter.direction}")
+    private String direction;
+
+    @Value("${recaptha.secret}")
+    private String recaptchaSecret;
 
     private final UserRepo userRepo;
     private final MailSender mailSender;
     private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
 
-    public UserService(UserRepo userRepo, MailSender mailSender, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, MailSender mailSender, PasswordEncoder passwordEncoder, RestTemplate restTemplate) {
         this.userRepo = userRepo;
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -36,57 +51,8 @@ public class UserService implements UserDetailsService {
         return userRepo.findByUsername(s);
     }
 
-    private boolean isCorrectName(String name) {
-        if (name != null) {
-            return (name.length() <= NAME_LENGTH);
-        } else {
-            return true;
-        }
-    }
-
-    private boolean isCorrectPassword(String password) {
-        return password.length() >= PASSWORD_LENGTH;
-    }
-
-    private boolean isCorrectUsername(String username) {
-        return username.length() >= USERNAME_LENGTH;
-    }
-
-    public Map<String, Object> addUser(User user) {
-        if (!isCorrectUsername(user.getUsername())) {
-            return Collections.singletonMap("usernameError", "Username too small");
-        }
-        if (!isCorrectPassword(user.getPassword())) {
-            return Collections.singletonMap("passwordError", "Password too small");
-        }
-        User userFromDb = userRepo.findByUsername(user.getUsername());
-        if (userFromDb != null) {
-            return Collections.singletonMap("usernameError", "Username already exist");
-        }
-
-        user.setActive(true);
-        user.setRoles(Collections.singleton(UserRole.USER));
-        user.setActivationCode(UUID.randomUUID().toString());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        userRepo.save(user);
-
-        if (!StringUtils.isEmpty(user.getEmail())) {
-            String message = String.format(
-                    "Hello, %s! \n" +
-                            "Welcome to Twitter Clone.\n" +
-                            "Visit next link to activate account: http://localhost:8080/registration/activate/%s",
-                    user.getUsername(),
-                    user.getActivationCode()
-            );
-            mailSender.send(user.getEmail(), "Activation code", message);
-        }
-        return Collections.emptyMap();
-    }
-
     public boolean activateUser(String code) {
         User user = userRepo.findByActivationCode(code);
-
         if (user == null) {
             return false;
         }
@@ -97,12 +63,6 @@ public class UserService implements UserDetailsService {
 
 
     public String editUserProfile(User user) {
-        if (!isCorrectName(user.getName())) {
-            return "Name is not correct";
-        }
-        if (!isCorrectPassword(user.getPassword())) {
-            return "Password is not correct";
-        }
         userRepo.save(user);
         return "";
     }
@@ -115,10 +75,10 @@ public class UserService implements UserDetailsService {
                 subscriber.getFriends().add(currentUSer);
                 userRepo.save(subscriber);
             } else {
-                System.out.println("already contains");
+                LOGGER.error("User @{} already in subscribers user @{}", subscriber.getUsername(), user.getUsername());
             }
         } else {
-            System.out.println("no allow to subscr on current");
+            LOGGER.error("You cannot subscribe on myself");
         }
     }
 
@@ -130,10 +90,69 @@ public class UserService implements UserDetailsService {
                 subscriber.getFriends().remove(currentUSer);
                 userRepo.save(subscriber);
             } else {
-                System.out.println("no user");
+                LOGGER.error("User @{} not in subscribers @{}", subscriber.getUsername(), user.getUsername());
             }
         } else {
-            System.out.println("no allow to subscr on current");
+            LOGGER.error("You cannot subscribe on myself");
         }
+    }
+
+    public boolean addUser(User user, BindingResult bindingResult, Model model, String captchaResponse) {
+        // valid check
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = ServiceUtil.getErrors(bindingResult);
+            model.mergeAttributes(errorMap);
+            model.addAttribute("user", user);
+            return false;
+        }
+
+        // check db
+        User userFromDb = userRepo.findByUsername(user.getUsername());
+        if (userFromDb != null) {
+            model.addAttribute("user", user);
+            model.addAttribute("usernameError", "Username already exist");
+            return false;
+        }
+
+        // captcha check
+        if (!StringUtils.isEmpty(captchaResponse)) {
+            String url = String.format(CAPTCHA_URL, recaptchaSecret, captchaResponse);
+            CaptchaResponceDto response = restTemplate.postForObject(url, Collections.emptyList(),
+                    CaptchaResponceDto.class);
+
+            if (!response.isSuccess()) {
+                model.addAttribute("captchaError", "Fill captcha");
+                model.addAttribute("user", user);
+                return false;
+            }
+
+            LOGGER.info("captcha success");
+        } else {
+            if (captchaResponse != null){
+                model.addAttribute("captchaError", "Fill captcha");
+                model.addAttribute("user", user);
+                return false;
+            }
+        }
+
+        // send mail
+        if (!StringUtils.isEmpty(user.getEmail())) {
+            String message = String.format(
+                    "Hello, %s! \n" +
+                            "Welcome to Twitter Clone.\n" +
+                            "Visit next link to activate account: %s/registration/activate/%s",
+                    direction,
+                    user.getUsername(),
+                    user.getActivationCode()
+            );
+            mailSender.send(user.getEmail(), "Activation code", message);
+        }
+
+        user.setActive(true);
+        user.setRoles(Collections.singleton(UserRole.USER));
+        user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepo.save(user);
+        return true;
     }
 }

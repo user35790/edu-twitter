@@ -12,9 +12,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/user")
@@ -42,11 +43,13 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/monitor/new")
-    public String add(@RequestParam String login,
-                      @RequestParam String password,
+    public String add(@Valid User user,
+                      BindingResult bindingResult,
                       Model model) {
-        userRepo.save(new User(login, password, true, Collections.singleton(UserRole.USER)));
-        LOGGER.info("Create new user @{}", login);
+        boolean isAddUser = userService.addUser(user, bindingResult, model, null);
+        if (isAddUser) {
+            LOGGER.info("Create new user @{}", user.getUsername());
+        }
         model.addAttribute("users", userRepo.findAll());
         return "admin_users";
     }
@@ -68,25 +71,19 @@ public class UserController {
         String message = userService.editUserProfile(user);
         if (!message.equals("")) {
             model.addAttribute("message", message);
-            model = setModelEditUser(model, user);
+            model.addAttribute("user", user);
+            model.addAttribute("roles", UserRole.values());
+            model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+            model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
             LOGGER.info("Edit user #{}", user.getId());
             return "user_edit";
         }
-
         if (user.getId().equals(userSession.getId())) {
             return "redirect:/user";
         } else {
             return "redirect:/user/monitor";
         }
 
-    }
-
-    private Model setModelEditUser(Model model, User user) {
-        model.addAttribute("user", user);
-        model.addAttribute("roles", UserRole.values());
-        model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
-        model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
-        return model;
     }
 
     @GetMapping("/edit/{userId}")
@@ -96,7 +93,10 @@ public class UserController {
         if ((userId.equals(0)) || (userSession.getRoles().iterator().next() == UserRole.ADMIN)) {
             User user = (userId.equals(0)) ?
                     userRepo.findFirstById(userSession.getId()) : userRepo.findFirstById(userId);
-            model = setModelEditUser(model, user);
+            model.addAttribute("user", user);
+            model.addAttribute("roles", UserRole.values());
+            model.addAttribute("func_user", user.getRoles().iterator().next() == (UserRole.USER));
+            model.addAttribute("func_admin", user.getRoles().iterator().next() == (UserRole.ADMIN));
             return "user_edit";
         } else {
             return "redirect:/user";
@@ -131,14 +131,14 @@ public class UserController {
     public String addSubscriber(@RequestParam Integer userSubscrId,
                                 @AuthenticationPrincipal User user) {
         userService.addSubscriber(userSubscrId, user);
-        return "redirect:/user";
+        return "redirect:/user/" + userSubscrId.toString();
     }
 
     @PostMapping("/unsubscribe")
     public String deleteSubscriber(@RequestParam Integer userSubscrId,
                                    @AuthenticationPrincipal User user) {
         userService.deleteSubscribe(userSubscrId, user);
-        return "redirect:/user";
+        return "redirect:/user/" + userSubscrId.toString();
     }
 
     @GetMapping("/subscriptions/{user}")

@@ -1,12 +1,11 @@
 package com.test.model;
 
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,8 +19,8 @@ public class Tweet {
     @JoinColumn(name = "user_id")
     private User author;
 
-    @NotBlank(message = "Message cannot be empty")
-    @Length(max = 2048, message = "Message too long (more than 2048Kb)")
+    @NotBlank(message = "Text tweet cannot be empty")
+    @Size(max = 300, message = "Message too long (more than 300 characters)")
     private String text;
 
     private String filename;
@@ -33,8 +32,8 @@ public class Tweet {
     @ManyToMany
     @JoinTable(
             name = "tweets_likes",
-            joinColumns = { @JoinColumn(name = "tweet_id")},
-            inverseJoinColumns = { @JoinColumn(name = "user_id")}
+            joinColumns = {@JoinColumn(name = "tweet_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private Set<User> likesOf = new HashSet<>();
 

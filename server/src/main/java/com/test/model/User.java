@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,15 +20,19 @@ public class User implements UserDetails {
     private Integer id;
 
     @NotBlank(message = "Username cannot be empty")
+    @Size(min = 5, max = 20, message = "Username has not valid size (min = 5, max = 20)")
     private String username;
 
     @NotBlank(message = "Password cannot be empty")
+    @Size(min = 5, message = "Password has not valid size (min = 5, max = 20)")
     private String password;
 
     private boolean active;
 
+    @Size(max = 100, message = "Name cannot be more than 100 characters")
     private String name;
 
+    @Size(max = 300, message = "About cannot be more than 300 characters")
     private String about;
 
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
@@ -60,8 +65,8 @@ public class User implements UserDetails {
     @ManyToMany
     @JoinTable(
             name = "tweets_likes",
-            joinColumns = { @JoinColumn(name = "user_id")},
-            inverseJoinColumns = { @JoinColumn(name = "tweet_id")}
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tweet_id")}
     )
     private Set<Tweet> liked;
 
