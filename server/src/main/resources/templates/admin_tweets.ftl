@@ -13,7 +13,7 @@
     </form>
 </div>
 
-    <@l.tw tweets/>
+    <@l.tw tweets true/>
 
 
 </@c.page>
